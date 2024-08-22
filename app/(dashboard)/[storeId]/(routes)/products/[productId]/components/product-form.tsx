@@ -18,6 +18,8 @@ import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
 import ImageUpload from "@/components/ui/image-upload"
 import { Checkbox } from "@/components/ui/checkbox"
+import { auth } from "@clerk/nextjs/server"
+import { useAuth } from "@clerk/nextjs"
 
 
 interface ProductFormProps {
@@ -44,6 +46,8 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
     const [loading, setLoading] = useState(false)
     const params = useParams()
     const router = useRouter()
+    const { userId } = useAuth()
+    console.log({ userId });
     const title = initialData ? "Edit Product" : "Add Product"
     const description = initialData ? "Edit Product Store" : "Add Product Store"
     const action = initialData ? "Save Product" : "Create Product"
@@ -67,16 +71,21 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
     const onSubmit = async (data: ProductFormValues) => {
         try {
             setLoading(true)
+            const newData = {
+                ...data,
+                userId,
+            }
             if (initialData) {
-                await axios.patch(`/api/${params.storeId}/products/${params.productId}`, data)
+                await axios.patch(`/api/${params.storeId}/products/${params.productId}`, newData)
             } else {
-                await axios.post(`/api/${params.storeId}/products`, data)
+                await axios.post(`/api/${params.storeId}/products`, newData)
             }
             router.refresh()
             toast.success("Success Upload Product")
             router.push(`/${params.storeId}/products`)
         } catch (error) {
             toast.error("Check Your Data Again")
+            console.log(error)
         } finally {
             setLoading(false)
         }
@@ -121,7 +130,7 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
                             <FormControl>
                                 <ImageUpload
                                     disabled={loading}
-                                    onChange={(url) => field.onChange([...field.value, {url}])}
+                                    onChange={(url) => field.onChange([...field.value, { url }])}
                                     onRemove={(url) => field.onChange([...field.value.filter((current) => current.url !== url)])}
                                     value={field.value.map((image) => image.url)} />
                             </FormControl>

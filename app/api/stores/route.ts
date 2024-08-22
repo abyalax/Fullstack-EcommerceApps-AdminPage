@@ -5,7 +5,9 @@ import { NextResponse } from "next/server"
 export async function POST(req: Request) {
     try {
         const {userId} = auth()
-        const body = await req.json()
+        console.log({userId});
+        
+        const body = await req.json()   
 
         const {name} = body
 
@@ -26,7 +28,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json(store)
 
-    } catch (error) {
+    } catch (error) {   
         console.log("[STORE_POST]", error)
         return new NextResponse("Internal Error", { status: 500 })
     }

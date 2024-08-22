@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 
 export default async function SetUplayout({ children }: { children: React.ReactNode }) {
 
-    const {userId} = auth()
+    const userId = await auth().userId
+    console.log({userId});
+
 
     if (!userId) {
         redirect("/sign-in")
@@ -19,7 +21,7 @@ export default async function SetUplayout({ children }: { children: React.ReactN
     }
     return (
         <>
-        {children}
+            {children}
         </>
     )
 }

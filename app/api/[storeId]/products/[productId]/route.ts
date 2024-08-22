@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request, { params }: { params: { productId: string } }) {
     try {
-        if(!params.productId) return new NextResponse("Need Product Id ", { status: 400 })
+        if (!params.productId) return new NextResponse("Need Product Id ", { status: 400 })
         const product = await db.product.findUnique({
             where: {
                 id: params.productId,
@@ -23,16 +23,17 @@ export async function GET(req: Request, { params }: { params: { productId: strin
 
 export async function PATCH(req: Request, { params }: { params: { storeId: string, productId: string } }) {
     try {
-        const { userId } = auth()
+
         const body = await req.json()
-        const { name, price, categoryId, images, isFeatured, isArchived } = body
+
+        const { name, price, categoryId, images, isFeatured, isArchived, userId } = body
 
         if (!userId) return new NextResponse("Unauthorized", { status: 401 })
-            if (!name) return new NextResponse("Product label must be Input", { status: 400 })
-            if (!images || !images.length) return new NextResponse("Product image must be Input", { status: 400 })
-            if (!price) return new NextResponse("Product price must be Input", { status: 400 })
-            if (!categoryId) return new NextResponse("Product category must be Input", { status: 400 })
-            if (!params.productId) return new NextResponse("Need Product Id ", { status: 400 })
+        if (!name) return new NextResponse("Product label must be Input", { status: 400 })
+        if (!images || !images.length) return new NextResponse("Product image must be Input", { status: 400 })
+        if (!price) return new NextResponse("Product price must be Input", { status: 400 })
+        if (!categoryId) return new NextResponse("Product category must be Input", { status: 400 })
+        if (!params.productId) return new NextResponse("Need Product Id ", { status: 400 })
 
         const storeByUserId = await db.store.findFirst({
             where: {
@@ -43,7 +44,7 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
         })
         if (!storeByUserId) return new NextResponse("Unauthorized", { status: 401 })
 
-       await db.product.update({
+        await db.product.update({
             where: {
                 id: params.productId,
             },
@@ -60,14 +61,14 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
         })
 
         const product = await db.product.update({
-            where : {
+            where: {
                 id: params.productId
             },
             data: {
                 images: {
                     createMany: {
                         data: [
-                            ...images.map((image : {url : string}) => image),
+                            ...images.map((image: { url: string }) => image),
                         ]
                     }
                 }
@@ -84,7 +85,9 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
 
 export async function DELETE(req: Request, { params }: { params: { storeId: string, productId: string } }) {
     try {
-        const { userId } = auth()
+        const userId = await auth().userId
+        console.log({ userId });
+
 
         if (!userId) return new NextResponse("Unauthorized", { status: 401 })
         if (!params.productId) return new NextResponse("Need Product Id ", { status: 400 })

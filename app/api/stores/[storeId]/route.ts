@@ -2,12 +2,13 @@ import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export async function PATCH (req: Request, { params }: { params: { storeId: string } }) {
+export async function PATCH(req: Request, { params }: { params: { storeId: string } }) {
+    
     try {
-        const { userId } = auth()
+
         const body = await req.json()
 
-        const { name } = body
+        const { name, userId } = body
 
         if (!userId) return new NextResponse("Unauthorized", { status: 401 })
         if (!name) return new NextResponse("Store Name must be input", { status: 400 })
@@ -31,9 +32,11 @@ export async function PATCH (req: Request, { params }: { params: { storeId: stri
     }
 }
 
-export async function DELETE (req: Request, { params }: { params: { storeId: string } }) {
+export async function DELETE(req: Request, { params }: { params: { storeId: string } }) {
     try {
-        const { userId } = auth()
+        const userId = await auth().userId
+        console.log({ userId });
+
 
         if (!userId) return new NextResponse("Unauthorized", { status: 401 })
         if (!params.storeId) return new NextResponse("Need Store Id ", { status: 400 })

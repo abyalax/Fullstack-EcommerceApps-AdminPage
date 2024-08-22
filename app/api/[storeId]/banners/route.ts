@@ -4,19 +4,12 @@ import { NextResponse } from "next/server"
 
 export async function POST(req: Request, { params }: { params: { storeId: string } }) {
     try {
-        const { userId } = auth()
         const body = await req.json()
+        const { label, imageUrl, userId } = body
 
-        const { label, imageUrl } = body
-
-        console.log(userId);
-        
         if (!userId) return new NextResponse("Unauthorized", { status: 401 })
-
         if (!label) return new NextResponse("Banner name must be Input", { status: 400 })
-
         if (!imageUrl) return new NextResponse("Banner image must be Input", { status: 400 })
-
         if (!params.storeId) return new NextResponse("Need Store Id ", { status: 400 })
 
         const storeByUserId = await db.store.findFirst({
@@ -35,7 +28,6 @@ export async function POST(req: Request, { params }: { params: { storeId: string
                 storeId: params.storeId
             }
         })
-        console.log(banner);
         
         return NextResponse.json(banner)
 

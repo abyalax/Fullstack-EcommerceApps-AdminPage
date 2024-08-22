@@ -16,6 +16,7 @@ import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useAuth } from "@clerk/nextjs"
 
 
 interface CategoryFormProps {
@@ -36,6 +37,7 @@ const CategoryForm = ({ initialData, banners }: CategoryFormProps) => {
     const [loading, setLoading] = useState(false)
     const params = useParams()
     const router = useRouter()
+    const { userId } = useAuth()
     const title = initialData ? "Edit Category" : "Add Category"
     const description = initialData ? "Edit Category Store" : "Add Category Store"
     const action = initialData ? "Save Category" : "Create Category"
@@ -51,10 +53,14 @@ const CategoryForm = ({ initialData, banners }: CategoryFormProps) => {
     const onSubmit = async (data: CategoryFormValues) => {
         try {
             setLoading(true)
+            const newData = {
+                ...data,
+                userId
+            }
             if (initialData) {
-                await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
+                await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, newData)
             } else {
-                await axios.post(`/api/${params.storeId}/categories`, data)
+                await axios.post(`/api/${params.storeId}/categories`, newData)
             }
             router.refresh()
             toast.success("Success Update Category")

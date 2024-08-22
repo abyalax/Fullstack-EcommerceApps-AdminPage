@@ -17,6 +17,7 @@ import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
 import { ApiAlert } from "@/components/ui/api-alert"
 import { useOrigin } from "@/hooks/use-origin"
+import { useAuth } from "@clerk/nextjs"
 
 
 interface SettingsFormProps {
@@ -36,6 +37,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
     const origin = useOrigin()
     const params = useParams()
     const router = useRouter()
+    const { userId } = useAuth()
 
     const form = useForm<SettingFormValues>({
         resolver: zodResolver(formSchema),
@@ -45,7 +47,11 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
     const onSubmit = async (data: SettingFormValues) => {
         try {
             setLoading(true)
-            await axios.patch(`/api/stores/${params.storeId}`, data)
+            const newData = {
+                ...data,
+                userId
+            }
+            await axios.patch(`/api/stores/${params.storeId}`, newData)
             router.refresh()
             toast.success("Success Update Store")
         } catch (error) {
@@ -104,8 +110,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
                     </Button>
                 </form>
             </Form>
-            <Separator/>
-            <ApiAlert title="PUBLIC_API_URL" description={`${origin}/api/${params.storeId}`} variant="public"/>
+            <Separator />
+            <ApiAlert title="PUBLIC_API_URL" description={`${origin}/api/${params.storeId}`} variant="public" />
         </>
     )
 }

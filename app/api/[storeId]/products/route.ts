@@ -4,10 +4,9 @@ import { NextResponse } from "next/server"
 
 export async function POST(req: Request, { params }: { params: { storeId: string } }) {
     try {
-        const { userId } = auth()
         const body = await req.json()
 
-        const { name, price, categoryId, images, isFeatured, isArchived } = body
+        const { name, price, categoryId, images, isFeatured, isArchived, userId } = body
 
         if (!userId) return new NextResponse("Unauthorized", { status: 401 })
         if (!name) return new NextResponse("Banner label must be Input", { status: 400 })

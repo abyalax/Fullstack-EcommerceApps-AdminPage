@@ -1,13 +1,11 @@
 import db from "@/lib/db"
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request, { params }: { params: { storeId: string } }) {
     try {
-        const { userId } = auth()
         const body = await req.json()
 
-        const { name, bannerId } = body
+        const { name, bannerId, userId } = body
 
         console.log(userId);
         
