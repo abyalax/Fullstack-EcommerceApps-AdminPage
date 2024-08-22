@@ -1,13 +1,12 @@
 import db from "@/lib/db"
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request, { params }: { params: { storeId: string } }) {
     try {
         const body = await req.json()
-        const { label, imageUrl, userId } = body
+        const { label, imageUrl, userID } = body
 
-        if (!userId) return new NextResponse("Unauthorized", { status: 401 })
+        if (!userID) return new NextResponse("Unauthorized", { status: 401 })
         if (!label) return new NextResponse("Banner name must be Input", { status: 400 })
         if (!imageUrl) return new NextResponse("Banner image must be Input", { status: 400 })
         if (!params.storeId) return new NextResponse("Need Store Id ", { status: 400 })
@@ -15,7 +14,7 @@ export async function POST(req: Request, { params }: { params: { storeId: string
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId,
+                userId: userID
 
             }
         })

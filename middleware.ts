@@ -7,7 +7,6 @@ export default clerkMiddleware((auth, request) => {
     auth().protect()
   }
 })
-console.log("Middleware Running");
 
 export const config = {
   matcher: [

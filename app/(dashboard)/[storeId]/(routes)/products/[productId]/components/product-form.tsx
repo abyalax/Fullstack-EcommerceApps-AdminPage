@@ -18,8 +18,7 @@ import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
 import ImageUpload from "@/components/ui/image-upload"
 import { Checkbox } from "@/components/ui/checkbox"
-import { auth } from "@clerk/nextjs/server"
-import { useAuth } from "@clerk/nextjs"
+import { useUserContext } from "@/context/user-context"
 
 
 interface ProductFormProps {
@@ -46,8 +45,7 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
     const [loading, setLoading] = useState(false)
     const params = useParams()
     const router = useRouter()
-    const { userId } = useAuth()
-    console.log({ userId });
+    const { userID } = useUserContext()
     const title = initialData ? "Edit Product" : "Add Product"
     const description = initialData ? "Edit Product Store" : "Add Product Store"
     const action = initialData ? "Save Product" : "Create Product"
@@ -73,7 +71,7 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
             setLoading(true)
             const newData = {
                 ...data,
-                userId,
+                userID
             }
             if (initialData) {
                 await axios.patch(`/api/${params.storeId}/products/${params.productId}`, newData)
@@ -94,7 +92,11 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/products/${params.productId}`)
+            await axios.delete(`/api/${params.storeId}/products/${params.productId}`, {
+                data: {
+                  userID
+                }
+            })
             router.refresh()
             router.push(`/${params.storeId}/products`)
             toast.success("Success Delete Product")

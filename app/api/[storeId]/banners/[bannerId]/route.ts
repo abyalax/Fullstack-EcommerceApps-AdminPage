@@ -20,11 +20,10 @@ export async function GET(req: Request, { params }: { params: { bannerId: string
 
 export async function PATCH(req: Request, { params }: { params: { storeId: string, bannerId: string } }) {
     try {
-        const userId = await auth().userId
         const body = await req.json()
-        const { label, imageUrl } = body
+        const { label, imageUrl, userID } = body
 
-        if (!userId) return new NextResponse("Unauthorized from AUTH Clerk", { status: 401 })
+        if (!userID) return new NextResponse("Unauthorized from AUTH Clerk", { status: 401 })
         if (!label) return new NextResponse("Label Store must be input", { status: 400 })
         if (!imageUrl) return new NextResponse("Image URL must be input", { status: 400 })
         if (!params.bannerId) return new NextResponse("Need Banner Id ", { status: 400 })
@@ -32,7 +31,7 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId,
+                userId : userID
 
             }
         })
@@ -57,15 +56,17 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
 
 export async function DELETE(req: Request, { params }: { params: { storeId: string, bannerId: string } }) {
     try {
-        const userId = await auth().userId
 
-        if (!userId) return new NextResponse("Unauthorized", { status: 401 })
+        const body = await req.json()
+        const { userID } = body
+
+        if (!userID) return new NextResponse("Unauthorized", { status: 401 })
         if (!params.storeId) return new NextResponse("Need Banner Id ", { status: 400 })
 
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId,
+                userId: userID
 
             }
         })

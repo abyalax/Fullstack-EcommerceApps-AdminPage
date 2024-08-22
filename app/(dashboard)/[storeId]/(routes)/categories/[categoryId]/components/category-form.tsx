@@ -16,7 +16,7 @@ import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAuth } from "@clerk/nextjs"
+import { useUserContext } from "@/context/user-context"
 
 
 interface CategoryFormProps {
@@ -37,7 +37,8 @@ const CategoryForm = ({ initialData, banners }: CategoryFormProps) => {
     const [loading, setLoading] = useState(false)
     const params = useParams()
     const router = useRouter()
-    const { userId } = useAuth()
+    // const { userId } = useAuth()
+    const { userID } = useUserContext()
     const title = initialData ? "Edit Category" : "Add Category"
     const description = initialData ? "Edit Category Store" : "Add Category Store"
     const action = initialData ? "Save Category" : "Create Category"
@@ -55,7 +56,7 @@ const CategoryForm = ({ initialData, banners }: CategoryFormProps) => {
             setLoading(true)
             const newData = {
                 ...data,
-                userId
+                userID
             }
             if (initialData) {
                 await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, newData)
@@ -75,7 +76,7 @@ const CategoryForm = ({ initialData, banners }: CategoryFormProps) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`)
+            await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`, { data: { userID } })
             router.refresh()
             router.push(`/${params.storeId}/categories`)
             toast.success("Success Delete Category")

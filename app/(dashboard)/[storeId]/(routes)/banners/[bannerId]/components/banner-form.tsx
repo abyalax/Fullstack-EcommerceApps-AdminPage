@@ -15,9 +15,8 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
-import { useOrigin } from "@/hooks/use-origin"
 import ImageUpload from "@/components/ui/image-upload"
-import { useAuth } from "@clerk/nextjs"
+import { useUserContext } from "@/context/user-context"
 
 
 interface BannerFormProps {
@@ -37,7 +36,7 @@ const BannerForm = ({ initialData }: BannerFormProps) => {
     const [loading, setLoading] = useState(false)
     const params = useParams()
     const router = useRouter()
-    const { userId } = useAuth()
+    const { userID } = useUserContext()
     const title = initialData ? "Edit Banner" : "Add Banner"
     const description = initialData ? "Edit Banner Store" : "Add Banner Store"
     const toastNMessage = initialData ? "Succes Edit Banner" : "Succes Create Banner"
@@ -56,9 +55,9 @@ const BannerForm = ({ initialData }: BannerFormProps) => {
             setLoading(true)
             const newData = {
                 ...data,
-                userId,
+                userID,
             }
-            if(initialData) {
+            if (initialData) {
                 await axios.patch(`/api/${params.storeId}/banners/${params.bannerId}`, newData)
             } else {
                 await axios.post(`/api/${params.storeId}/banners`, newData)
@@ -69,7 +68,7 @@ const BannerForm = ({ initialData }: BannerFormProps) => {
         } catch (error) {
             toast.error("Check Your Data Again")
             console.log(error);
-            
+
         } finally {
             setLoading(false)
         }
@@ -78,7 +77,7 @@ const BannerForm = ({ initialData }: BannerFormProps) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`)
+            await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`, { data: { userID } })
             router.refresh()
             router.push(`/${params.storeId}/banners`)
             toast.success(toastNMessage)

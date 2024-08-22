@@ -17,7 +17,7 @@ import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modal/alert-modal"
 import { ApiAlert } from "@/components/ui/api-alert"
 import { useOrigin } from "@/hooks/use-origin"
-import { useAuth } from "@clerk/nextjs"
+import { useUserContext } from "@/context/user-context"
 
 
 interface SettingsFormProps {
@@ -37,7 +37,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
     const origin = useOrigin()
     const params = useParams()
     const router = useRouter()
-    const { userId } = useAuth()
+    const { userID } = useUserContext()
 
     const form = useForm<SettingFormValues>({
         resolver: zodResolver(formSchema),
@@ -49,7 +49,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
             setLoading(true)
             const newData = {
                 ...data,
-                userId
+                userID
             }
             await axios.patch(`/api/stores/${params.storeId}`, newData)
             router.refresh()
@@ -64,7 +64,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/stores/${params.storeId}`)
+            await axios.delete(`/api/stores/${params.storeId}`, { data: { userID } })
             router.refresh()
             router.push("/")
             toast.success("Success Delete Store")

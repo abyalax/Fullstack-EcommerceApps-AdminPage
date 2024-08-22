@@ -11,6 +11,7 @@ import { Button } from "../ui/button"
 import { useState } from "react"
 import axios from "axios"
 import toast from "react-hot-toast"
+import { useUserContext } from "@/context/user-context"
 
 const formSchema = z.object({
     name: z.string().min(1),
@@ -19,7 +20,7 @@ const formSchema = z.object({
 const StoreModal = () => {
     const storeModal = useStoreModal()
     const [isLoading, setIsLoading] = useState(false)
-
+    const { userID } = useUserContext()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -31,21 +32,22 @@ const StoreModal = () => {
     const onSubmit = async (value: z.infer<typeof formSchema>) => {
         try {
             setIsLoading(true)
-
-            const response = await axios.post('/api/stores', value)
-            console.log(response.data);
+            const newValue = {
+                ...value,
+                userID
+            }
+            const response = await axios.post('/api/stores', newValue)
             toast.success("Berhasil membuat Toko")
             window.location.assign(`/${response.data.id}`)
         } catch
-         (error) {
+        (error) {
             toast.error("Gagal Membuat Toko")
             console.log(error);
         } finally {
             setIsLoading(false)
         }
-        console.log(value);
     }
-    
+
     return (
         <Modal
             description="Tambahkan  Store untuk membuat produk dan kategori"

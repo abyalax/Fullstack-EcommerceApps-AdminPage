@@ -1,12 +1,11 @@
+import { useUserContext } from "@/context/user-context";
 import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function SetUplayout({ children }: { children: React.ReactNode }) {
 
-    const userId = await auth().userId
-    console.log({userId});
-
+    const userId = auth().userId
 
     if (!userId) {
         redirect("/sign-in")
