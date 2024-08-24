@@ -1,11 +1,10 @@
 'use client'
 
 import { useAuth } from "@clerk/nextjs"
-import { createContext, Dispatch, useContext, useEffect, useState } from "react"
+import { createContext, Dispatch, useContext, useEffect, useMemo, useState } from "react"
 
 // Props
 interface ContextProps {
-    //contoh data untuk useContext
     userID: string
     setUserID: Dispatch<React.SetStateAction<string>>
 }
@@ -19,14 +18,17 @@ const GlobalContext = createContext<ContextProps>({
 // Komponen GlobalContextProvider
 export const GlobalContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [userID, setUserID] = useState("")
-    const {userId} = useAuth()
-    
+    const { userId } = useAuth()
+
     useEffect(() => {
         if (userId) setUserID(userId)
-    },[userId] )
-    
+    }, [userId])
+
+    // Memoizing the context value
+    const value = useMemo(() => ({ userID, setUserID }), [userID]);
+
     return (
-        <GlobalContext.Provider value={{ userID, setUserID }}>
+        <GlobalContext.Provider value={value}>
             {children}
         </GlobalContext.Provider>
     )

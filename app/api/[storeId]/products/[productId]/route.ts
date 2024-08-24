@@ -51,9 +51,9 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
             data: {
                 name,
                 price,
-                categoryId,
                 isFeatured,
                 isArchived,
+                categoryId,
                 images: {
                     deleteMany: {}
                 },
@@ -68,12 +68,14 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
                 images: {
                     createMany: {
                         data: [
-                            ...images.map((image: { url: string }) => image),
+                            ...images.map((image: { url: string }) => image)
                         ]
                     }
                 }
             }
         })
+        console.log(product);
+        
 
         return NextResponse.json(product)
 

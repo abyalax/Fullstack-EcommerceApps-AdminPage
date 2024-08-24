@@ -11,7 +11,6 @@ const SetUpPage = () => {
   const { userID, setUserID } = useUserContext()
   if (userId) setUserID(userId)
     
-
   const onOpen = useStoreModal((state: { onOpen: any; }) => state.onOpen)
   const isOpen = useStoreModal((state: { isOpen: any; }) => state.isOpen)
 

@@ -17,7 +17,7 @@ export async function POST(req: Request, { params }: { params: { storeId: string
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId : userID
+                userId: userID
 
             }
         })
@@ -33,7 +33,9 @@ export async function POST(req: Request, { params }: { params: { storeId: string
                 storeId: params.storeId,
                 images: {
                     createMany: {
-                        data: [...images.map((image: { url: string }) => image)]
+                        data: [
+                            ...images.map((image: { url: string }) => image)
+                        ]
                     }
                 }
             }
