@@ -72,7 +72,7 @@ model Product {
 
 model Image {
   id        String   @unique @default(uuid())
-  productId String   @unique
+  productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
   createdAt DateTime @default(now())

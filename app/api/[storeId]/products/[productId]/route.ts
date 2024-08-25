@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request, { params }: { params: { productId: string } }) {
@@ -44,7 +43,7 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
         })
         if (!storeByUserId) return new NextResponse("Unauthorized", { status: 401 })
 
-        await db.product.update({
+        const product = await db.product.update({
             where: {
                 id: params.productId,
             },
@@ -55,25 +54,30 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
                 isArchived,
                 categoryId,
                 images: {
-                    deleteMany: {}
-                },
-            }
-        })
-
-        const product = await db.product.update({
-            where: {
-                id: params.productId
-            },
-            data: {
-                images: {
+                    deleteMany: {},
                     createMany: {
                         data: [
                             ...images.map((image: { url: string }) => image)
                         ]
                     }
-                }
+                },
             }
         })
+
+        // const product = await db.product.update({
+        //     where: {
+        //         id: params.productId
+        //     },
+        //     data: {
+        //         images: {
+        //             createMany: {
+        //                 data: [
+        //                     ...images.map((image: { url: string }) => image)
+        //                 ]
+        //             }
+        //         }
+        //     }
+        // })
         console.log(product);
         
 
