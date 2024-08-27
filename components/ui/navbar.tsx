@@ -1,23 +1,30 @@
 import { UserButton } from "@clerk/nextjs"
 import { MainNav } from "../main-nav"
 import StoreSwitcher from "../store-switcher"
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
+// import { auth } from "@clerk/nextjs/server"
+// import { redirect } from "next/navigation"
 import db from "@/lib/db"
+
+// let memoizedUserId: string | null = null
 
 const Navbar = async () => {
 
-    const {userId} = auth()
+    // if (!memoizedUserId) {
+    //     const { userId } = await auth();
+    //     console.log({ userId });
 
-    if (!userId) {
-        redirect("/sign-in")
-    }
+    //     if (!userId) {
+    //         return redirect("/sign-in");
+    //     }
+    //     memoizedUserId = userId;
+    // }
 
     const store = await db.store.findMany({
         where: {
-            userId,
+            userId: "user_2kNVlvvQFuyvt5LawJCn3hCraVO"
         }
     })
+
 
     return (
         <div className="border-b">
@@ -25,7 +32,7 @@ const Navbar = async () => {
                 <StoreSwitcher items={store} />
                 <MainNav className="mx-6 " />
                 <div className="ml-auto flex items-center space-x-4">
-                    <UserButton />
+                    <UserButton afterSignOutUrl="/"/>
                 </div>
             </div>
         </div>

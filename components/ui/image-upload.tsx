@@ -40,14 +40,14 @@ const ImageUpload = ({ onChange, onRemove, value, disabled }: ImageUploadProps) 
                     </div>
                 ))}
             </div>
-            <CldUploadWidget onSuccess={onUpload} uploadPreset="iosqxfqc">
-                {({open}) => {
+            <CldUploadWidget onSuccess={onUpload} options={{multiple: true}} uploadPreset="iosqxfqc">
+                {({ open }) => {
                     const onClick = () => {
                         open()
                     }
                     return (
                         <Button type="button" variant={"secondary"} onClick={onClick} disabled={disabled} >
-                            <ImagePlus className="h-4 w-4"/>
+                            <ImagePlus className="h-4 w-4" />
                             Upload Image
                         </Button>
                     )

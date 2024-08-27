@@ -77,7 +77,7 @@ const BannerForm = ({ initialData }: BannerFormProps) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`, { data: { userID } })
+            await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`)
             router.refresh()
             router.push(`/${params.storeId}/banners`)
             toast.success(toastNMessage)

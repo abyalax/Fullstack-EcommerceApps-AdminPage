@@ -91,17 +91,15 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
 
 export async function DELETE(req: Request, { params }: { params: { storeId: string, productId: string } }) {
     try {
-        const body = await req.json()
-        const { userID } = body
+        // const body = await req.json()
+        // const { userID } = body
 
-        if (!userID) return new NextResponse("Unauthorized", { status: 401 })
+        // if (!userID) return new NextResponse("Unauthorized", { status: 401 })
         if (!params.productId) return new NextResponse("Need Product Id ", { status: 400 })
 
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId: userID
-
             }
         })
         if (!storeByUserId) return new NextResponse("Unauthorized", { status: 401 })

@@ -56,17 +56,16 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
 
 export async function DELETE(req: Request, { params }: { params: { storeId: string, bannerId: string } }) {
     try {
-
-        const body = await req.json()
-        const { userID } = body
-
-        if (!userID) return new NextResponse("Unauthorized", { status: 401 })
+        const { userId } = await auth()
+        console.log("Method DELETE "+ {userId});
+        
+        if (!userId) return new NextResponse("Unauthorized", { status: 401 })
         if (!params.storeId) return new NextResponse("Need Banner Id ", { status: 400 })
 
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId: userID
+                userId
 
             }
         })

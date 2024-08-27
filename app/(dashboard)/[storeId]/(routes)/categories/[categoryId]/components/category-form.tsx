@@ -76,7 +76,7 @@ const CategoryForm = ({ initialData, banners }: CategoryFormProps) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`, { data: { userID } })
+            await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`)
             router.refresh()
             router.push(`/${params.storeId}/categories`)
             toast.success("Success Delete Category")

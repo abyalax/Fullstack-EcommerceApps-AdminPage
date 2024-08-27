@@ -1,4 +1,5 @@
 import db from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request, { params }: { params: { categoryId: string } }) {
@@ -59,17 +60,17 @@ export async function PATCH(req: Request, { params }: { params: { storeId: strin
 
 export async function DELETE(req: Request, { params }: { params: { storeId: string, categoryId: string } }) {
     try {
+        const { userId } = await auth()
+        console.log("Method DELETE " +{ userId });
+        
 
-        const body = await req.json()
-        const { userID } = body
-
-        if (!userID) return new NextResponse("Unauthorized", { status: 401 })
+        if (!userId) return new NextResponse("Unauthorized", { status: 401 })
         if (!params.categoryId) return new NextResponse("Need Category Id ", { status: 400 })
 
         const storeByUserId = await db.store.findFirst({
             where: {
                 id: params.storeId,
-                userId: userID
+                userId
 
             }
         })

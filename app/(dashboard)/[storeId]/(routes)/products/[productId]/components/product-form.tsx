@@ -92,11 +92,7 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/products/${params.productId}`, {
-                data: {
-                  userID
-                }
-            })
+            await axios.delete(`/api/${params.storeId}/products/${params.productId}`)
             router.refresh()
             router.push(`/${params.storeId}/products`)
             toast.success("Success Delete Product")
@@ -132,7 +128,7 @@ const ProductForm = ({ initialData, categories }: ProductFormProps) => {
                             <FormControl>
                                 <ImageUpload
                                     disabled={loading}
-                                    onChange={(url) => field.onChange([...field.value, {url}])}
+                                    onChange={(url) => field.onChange([...field.value,{url}])}
                                     onRemove={(url) => field.onChange([...field.value.filter((current) => current.url !== url)])}
                                     value={field.value.map((image) => image.url)} />
                             </FormControl>
